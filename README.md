@@ -4,7 +4,7 @@ My take on the Advent of Code 2022 challenges.
 
 ```bash
 mkdir build && cd build
-cmake -G ninja ..
+cmake -G Ninja ..
 
 # Compiling
 ninja [aoc_1 aoc_2 etc...]
