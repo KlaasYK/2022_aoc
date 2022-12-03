@@ -7,3 +7,4 @@ project(aoc22)
 
 add_subdirectory(1)
 add_subdirectory(2)
+add_subdirectory(3)
