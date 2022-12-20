@@ -64,7 +64,7 @@ struct vec3
 std::regex const COORD("(\\d+),(\\d+),(\\d+)");
 
 // Neighbours
-std::vector<vec3> NB{
+std::vector<vec3> const NB{
     vec3{-1, 0, 0},
     vec3{1, 0, 0},
     vec3{0, -1, 0},
@@ -80,7 +80,7 @@ try
 
     // Read input file
     // std::ifstream in(open_input_stream(argc, argv));
-    std::ifstream in("/home/kliffen/git/2022_aoc/18/test");
+    std::ifstream in("/home/kliffen/git/2022_aoc/18/input");
     std::vector<std::string> lines((LineIt(in)), LineIt());
 
     // Parse the lines
@@ -93,9 +93,10 @@ try
     for (auto const &line : lines)
         if (std::regex_match(line, match, COORD))
         {
-            int x = std::stoi(match[1]);
-            int y = std::stoi(match[2]);
-            int z = std::stoi(match[3]);
+            // Offset by 1; to make sure there is space before
+            int x = std::stoi(match[1]) + 1;
+            int y = std::stoi(match[2]) + 1;
+            int z = std::stoi(match[3]) + 1;
 
             // Add 2 to ensure empty space after the obsidian
             WIDTH = std::max(WIDTH, x + 2);
@@ -116,28 +117,36 @@ try
     size_t count = 0;
 
     // Scanner
-    // // From XY Plane
-    // for (size_t x = 0; x != WIDTH; ++x)
-    //     for (size_t y = 0; y != HEIGHT; ++y)
-    //         for (size_t z = 1; z != DEPTH; ++z)
-    //             if (volume[z * XY + y * WIDTH + x] != volume[(z - 1) * XY + y * WIDTH + x])
-    //                 ++count;
+    // From XY Plane
+    for (size_t x = 0; x != WIDTH; ++x)
+        for (size_t y = 0; y != HEIGHT; ++y)
+            for (size_t z = 1; z != DEPTH; ++z)
+                if (volume[z * XY + y * WIDTH + x] != volume[(z - 1) * XY + y * WIDTH + x])
+                    ++count;
 
-    // // From XZ Plane
-    // for (size_t x = 0; x != WIDTH; ++x)
-    //     for (size_t z = 0; z != DEPTH; ++z)
-    //         for (size_t y = 1; y != HEIGHT; ++y)
-    //             if (volume[z * XY + y * WIDTH + x] != volume[z * XY + (y - 1) * WIDTH + x])
-    //                 ++count;
+    // From XZ Plane
+    for (size_t x = 0; x != WIDTH; ++x)
+        for (size_t z = 0; z != DEPTH; ++z)
+            for (size_t y = 1; y != HEIGHT; ++y)
+                if (volume[z * XY + y * WIDTH + x] != volume[z * XY + (y - 1) * WIDTH + x])
+                    ++count;
 
-    // // From YZ Plane
-    // for (size_t y = 0; y != HEIGHT; ++y)
-    //     for (size_t z = 0; z != DEPTH; ++z)
-    //         for (size_t x = 1; x != WIDTH; ++x)
-    //             if (volume[z * XY + y * WIDTH + x] != volume[z * XY + y * WIDTH + x - 1])
-    //                 ++count;
+    // From YZ Plane
+    for (size_t y = 0; y != HEIGHT; ++y)
+        for (size_t z = 0; z != DEPTH; ++z)
+            for (size_t x = 1; x != WIDTH; ++x)
+                if (volume[z * XY + y * WIDTH + x] != volume[z * XY + y * WIDTH + x - 1])
+                    ++count;
 
-    // 3607 (too low)
+    // Naive approach
+    // for (auto const &cube : cubes)
+    //     for (auto const &n : NB)
+    //     {
+    //         vec3 l{cube + n};
+    //         if (!volume[l.z * XY + l.y * WIDTH + l.x])
+    //             ++count;
+    //     }
+
     std::cout << "Surface area: " << count << '\n';
 }
 catch (std::exception const &ex)
