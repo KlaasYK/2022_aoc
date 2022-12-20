@@ -93,22 +93,38 @@ try
     std::ifstream in("/home/kliffen/git/2022_aoc/13/input");
     std::vector<std::string> lines((LineIt(in)), LineIt());
 
-    size_t count = 0;
+    auto end = std::remove_if(lines.begin(), lines.end(), [](std::string const &line)
+                   { return line.empty(); });
 
-    for (size_t i = 0; i < lines.size(); i += 3)
+    lines.erase(end, lines.end());
+    // Add the divider packets
+    lines.push_back("[[2]]");
+    lines.push_back("[[6]]");
+
+    // Sort the lines
+    std::sort(lines.begin(), lines.end(), [](std::string const &a, std::string const &b){
+        json f(json::parse(a));
+        json s(json::parse(b));
+        return in_order(f, s) == 1;
+    });
+
+    // Find the indices of the divider packets
+    size_t p1 = 0;
+    size_t p2 = 0;
+
+    for (size_t i = 0; i != lines.size(); ++i)
     {
-        std::cout << "Pair " << (i / 3) + 1 << '\n';
-        json f(json::parse(lines[i]));
-        json s(json::parse(lines[i + 1]));
+        if (lines[i] == "[[2]]")
+            p1 = i + 1;
 
-        if (in_order(f, s) == 1)
+        if (lines[i] == "[[6]]")
         {
-            std::cout << "In order: " << (i / 3) + 1 << '\n';
-            count += (i / 3) + 1;
+            p2 = i +1;
+            break;
         }
     }
 
-    std::cout << "In order count: " << count << '\n';
+    std::cout << "Decoder key: " << p1 * p2 << '\n';
 }
 catch (std::exception const &ex)
 {
